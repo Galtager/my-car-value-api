@@ -1,11 +1,11 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, Req, Session, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Query, Req, Session, UseGuards } from '@nestjs/common';
 import { CreateUserDto } from './dtos/create-user.dto';
 import { UsersService } from './users.service';
 import { UpdateUserDto } from './dtos/update-user.dto';
-import { Serialize } from 'src/interceptors/serialize.interceptor';
+import { Serialize } from '../interceptors/serialize.interceptor';
 import { UserDto } from './dtos/user.dto';
 import { AuthService } from './auth.service';
-import { AuthGuard } from 'src/guards/auth.guard';
+import { AuthGuard } from '../guards/auth.guard';
 import { Request } from 'express';
 
 @Controller('auth')
@@ -42,7 +42,11 @@ export class UsersController {
     }
     @Get("/:id")
     async findUser(@Param("id") id: string) {
-        return await this.userService.findOne(+id)
+        const user = await this.userService.findOne(+id)
+        if (!user) {
+            throw new NotFoundException("no user id provided")
+        }
+        return user;
     }
     @Get()
     findAllUsers(@Query('email') email: string) {
