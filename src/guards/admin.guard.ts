@@ -1,9 +1,11 @@
 import { CanActivate, ExecutionContext } from "@nestjs/common";
 
-export class AuthGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
     canActivate(context: ExecutionContext): boolean {
         const req = context.switchToHttp().getRequest();
-        return !!req.session.userId
+        if (!req.currentUser) {
+            return false
+        }
+        return req.currentUser?.admin
     }
-
 }

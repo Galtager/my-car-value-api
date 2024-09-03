@@ -1,6 +1,7 @@
 import { Exclude } from "class-transformer";
 import { IsEmail } from "class-validator";
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Report } from "src/reports/report.entity";
+import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm";
 
 @Entity()
 export class User {
@@ -15,4 +16,11 @@ export class User {
     @Column()
     @Exclude()
     password: string;
+
+    @Column({ default: true })
+    admin: boolean;
+
+    @OneToMany(() => Report, (report) => report.user)
+    reports: Report[]
+
 }
